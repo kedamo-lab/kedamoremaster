@@ -1,0 +1,8 @@
+{
+  "name": "Kedamo Portfolio",
+  "description": "Темный сайт-визитка с интерактивным фоном PixelBlast, плеером с текстами песен, витриной игр и интерактивными соцсетями.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

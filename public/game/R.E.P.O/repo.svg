@@ -1,0 +1,81 @@
+
+<svg width="1280" height="720" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="darkRoom" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#18242a"/>
+      <stop offset="70%" stop-color="#0a0f12"/>
+      <stop offset="100%" stop-color="#030507"/>
+    </radialGradient>
+    <radialGradient id="eyeGlow" cx="35%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="75%" stop-color="#e8eff5"/>
+      <stop offset="100%" stop-color="#b0c4de"/>
+    </radialGradient>
+    <radialGradient id="robotBlack" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#3a4048"/>
+      <stop offset="70%" stop-color="#1a1d22"/>
+      <stop offset="100%" stop-color="#0c0e11"/>
+    </radialGradient>
+    <radialGradient id="robotBlue" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#7088b8"/>
+      <stop offset="60%" stop-color="#46587d"/>
+      <stop offset="100%" stop-color="#243048"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background Industrial Room -->
+  <rect width="1280" height="720" fill="url(#darkRoom)"/>
+
+  <!-- Left Robot (Dark cylinder head) -->
+  <g transform="translate(250, 480)">
+    <!-- Helmet / Body -->
+    <path d="M -160 300 L -160 -150 Q -160 -320 120 -320 Q 220 -320 220 300 Z" fill="url(#robotBlack)"/>
+    <!-- Collar ring -->
+    <ellipse cx="20" cy="180" rx="190" ry="35" fill="#2d333b" stroke="#000" stroke-width="4"/>
+
+    <!-- Giant Left Eye -->
+    <g transform="translate(180, -100)">
+      <circle cx="0" cy="0" r="140" fill="url(#eyeGlow)" stroke="#1a1a1a" stroke-width="6"/>
+      <!-- Big Pupil staring right -->
+      <circle cx="45" cy="10" r="46" fill="#0b0e14"/>
+      <!-- Eye highlight -->
+      <circle cx="20" cy="-25" r="14" fill="#ffffff"/>
+    </g>
+  </g>
+
+  <!-- Right Robot (Purple/Blue cylinder head) -->
+  <g transform="translate(1000, 480)">
+    <!-- Helmet / Body -->
+    <path d="M 160 300 L 160 -150 Q 160 -320 -120 -320 Q -220 -320 -220 300 Z" fill="url(#robotBlue)"/>
+    <!-- Collar ring -->
+    <ellipse cx="-20" cy="180" rx="190" ry="35" fill="#394863" stroke="#000" stroke-width="4"/>
+
+    <!-- Giant Right Eye touching the other -->
+    <g transform="translate(-180, -90)">
+      <circle cx="0" cy="0" r="145" fill="url(#eyeGlow)" stroke="#1a1a1a" stroke-width="6"/>
+      <!-- Big Pupil staring left directly at other pupil -->
+      <circle cx="-45" cy="5" r="48" fill="#0b0e14"/>
+      <!-- Eye highlight -->
+      <circle cx="-65" cy="-25" r="15" fill="#ffffff"/>
+    </g>
+  </g>
+
+  <!-- Center Crosshair -->
+  <g transform="translate(640, 360)" opacity="0.75">
+    <circle cx="0" cy="0" r="10" fill="none" stroke="#7cfc00" stroke-width="2"/>
+    <line x1="-18" y1="0" x2="-8" y2="0" stroke="#7cfc00" stroke-width="2"/>
+    <line x1="8" y1="0" x2="18" y2="0" stroke="#7cfc00" stroke-width="2"/>
+    <line x1="0" y1="-18" x2="0" y2="-8" stroke="#7cfc00" stroke-width="2"/>
+    <line x1="0" y1="8" x2="0" y2="18" stroke="#7cfc00" stroke-width="2"/>
+  </g>
+
+  <!-- HUD Overlay -->
+  <!-- Top Center Money HUD -->
+  <text x="640" y="90" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="#e6f7ff" text-anchor="middle" letter-spacing="4">$49K</text>
+
+  <!-- Left Stats HUD -->
+  <g transform="translate(60, 90)">
+    <text x="0" y="0" font-family="'Courier New', monospace" font-size="40" font-weight="900" fill="#00ff66">+26 <tspan fill="#66aa77" font-size="28">/100</tspan></text>
+    <text x="0" y="45" font-family="'Courier New', monospace" font-size="40" font-weight="900" fill="#ffcc00">⚡50 <tspan fill="#aa9933" font-size="28">/50</tspan></text>
+  </g>
+</svg>

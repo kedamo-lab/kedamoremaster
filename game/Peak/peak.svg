@@ -1,0 +1,97 @@
+
+<svg width="1280" height="720" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8d68c8"/>
+      <stop offset="35%" stop-color="#ba8be0"/>
+      <stop offset="65%" stop-color="#fca8a4"/>
+      <stop offset="100%" stop-color="#fed6a6"/>
+    </linearGradient>
+    <linearGradient id="mountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff8e7"/>
+      <stop offset="25%" stop-color="#e8a86a"/>
+      <stop offset="60%" stop-color="#b86050"/>
+      <stop offset="100%" stop-color="#5a2b5c"/>
+    </linearGradient>
+    <linearGradient id="rockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3d224e"/>
+      <stop offset="100%" stop-color="#231330"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1280" height="720" fill="url(#skyGrad)"/>
+
+  <!-- Fluffy clouds -->
+  <path d="M 0 350 Q 200 200 450 340 Q 700 220 950 360 Q 1150 260 1280 340 L 1280 720 L 0 720 Z" fill="#9b6bc4" opacity="0.35"/>
+  <path d="M 0 420 Q 300 320 600 410 Q 900 310 1280 430 L 1280 720 L 0 720 Z" fill="#6a3579" opacity="0.45"/>
+
+  <!-- Distant Birds -->
+  <g fill="#f2d0f7" opacity="0.7">
+    <path d="M 1150 180 Q 1160 170 1170 180 Q 1180 170 1190 180 Q 1180 175 1170 183 Q 1160 175 1150 180 Z"/>
+    <path d="M 1195 210 Q 1202 203 1210 210 Q 1218 203 1225 210 Q 1218 206 1210 212 Q 1202 206 1195 210 Z"/>
+    <path d="M 1110 230 Q 1118 222 1125 230 Q 1132 222 1140 230 Q 1132 226 1125 232 Q 1118 226 1110 230 Z"/>
+  </g>
+
+  <!-- Central High Sunlit Peak Mountain -->
+  <polygon points="680,180 880,560 480,560" fill="url(#mountainGrad)"/>
+  <!-- Mountain Shadow Side -->
+  <polygon points="680,180 880,560 710,560" fill="#a05252" opacity="0.6"/>
+  <!-- Snowcap glow -->
+  <polygon points="680,180 720,270 650,260" fill="#ffffff" opacity="0.9"/>
+
+  <!-- Foreground Cliff (Left side) -->
+  <path d="M -50 720 L -50 480 Q 180 420 280 540 Q 360 620 480 720 Z" fill="url(#rockGrad)"/>
+
+  <!-- Characters on Cliff -->
+  <!-- Blue leader reaching up -->
+  <g transform="translate(180, 390)">
+    <!-- Body -->
+    <rect x="-20" y="30" width="40" height="50" rx="15" fill="#f1b530"/>
+    <rect x="-16" y="70" width="14" height="25" fill="#3b2b4f"/>
+    <rect x="2" y="70" width="14" height="25" fill="#3b2b4f"/>
+    <!-- Head -->
+    <circle cx="0" cy="0" r="32" fill="#90caf9"/>
+    <!-- Cap -->
+    <path d="M -25 -10 Q 0 -35 25 -10 L 38 -5 Q 25 5 15 0 Z" fill="#e65100"/>
+    <!-- Face -->
+    <circle cx="-6" cy="-4" r="4" fill="#1a237e"/>
+    <circle cx="10" cy="-4" r="4" fill="#1a237e"/>
+    <path d="M -4 10 Q 4 18 12 10" stroke="#1a237e" stroke-width="3" fill="none"/>
+    <!-- Reaching arm -->
+    <path d="M -20 30 Q -60 10 -75 -15" stroke="#f1b530" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="-75" cy="-15" r="8" fill="#ffffff"/>
+  </g>
+
+  <!-- Green character climbing / holding hand -->
+  <g transform="translate(240, 560)">
+    <circle cx="0" cy="0" r="28" fill="#aed581"/>
+    <!-- Cap -->
+    <path d="M -20 -10 Q 0 -30 20 -10 L 30 -5 Q 20 3 10 0 Z" fill="#fbc02d"/>
+    <!-- Arm reaching up -->
+    <path d="M -15 -10 Q -25 -80 -40 -120" stroke="#aed581" stroke-width="10" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- Orange character -->
+  <g transform="translate(340, 450)">
+    <circle cx="0" cy="0" r="30" fill="#ff7043"/>
+    <path d="M -22 -10 Q 0 -32 22 -10 L 32 -6 Z" fill="#fbc02d"/>
+    <circle cx="-5" cy="0" r="5" fill="#3e2723"/>
+    <circle cx="12" cy="0" r="5" fill="#3e2723"/>
+  </g>
+
+  <!-- Purple character looking at mountain -->
+  <g transform="translate(450, 480)">
+    <circle cx="0" cy="0" r="30" fill="#ab47bc"/>
+    <path d="M -20 -10 Q 0 -32 20 -10 L 30 -6 Z" fill="#fbc02d"/>
+    <rect x="-18" y="25" width="36" height="40" rx="10" fill="#fbc02d"/>
+  </g>
+
+  <!-- Huge bold white "PEAK" Title Text in the sky -->
+  <g transform="translate(640, 240)">
+    <!-- Drop Shadow -->
+    <text x="0" y="10" font-family="'Arial Black', 'Impact', sans-serif" font-size="160" font-weight="900" fill="#2d134b" opacity="0.3" text-anchor="middle" letter-spacing="12">PEAK</text>
+    <!-- Main White Text -->
+    <text x="0" y="0" font-family="'Arial Black', 'Impact', sans-serif" font-size="160" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="12">PEAK</text>
+  </g>
+</svg>
