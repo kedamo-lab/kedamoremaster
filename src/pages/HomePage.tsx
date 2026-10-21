@@ -1,12 +1,8 @@
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import type { PointerEvent } from 'react';
 import { ArrowUpRight, Headphones, Play } from '../components/Icons';
 import { ThornHalo } from '../components/Atmosphere';
+import { LivingBotanical } from '../components/LivingBotanical';
 import { socialLinks } from '../data/servers';
 import { useAudio } from '../context/AudioContext';
 
@@ -22,14 +18,12 @@ export function HomePage({
   effectsEnabled,
 }: HomePageProps) {
   const { currentTrack, isPlaying, togglePlay } = useAudio();
-  const reduceMotion = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const rotateX = useSpring(y, { stiffness: 90, damping: 22 });
   const rotateY = useSpring(x, { stiffness: 90, damping: 22 });
   function tilt(event: PointerEvent<HTMLDivElement>) {
-    if (reduceMotion || !effectsEnabled || event.pointerType !== 'mouse')
-      return;
+    if (!effectsEnabled || event.pointerType !== 'mouse') return;
     const rect = event.currentTarget.getBoundingClientRect();
     x.set(((event.clientX - rect.left) / rect.width - 0.5) * 7);
     y.set(-((event.clientY - rect.top) / rect.height - 0.5) * 7);
@@ -66,7 +60,6 @@ export function HomePage({
               >
                 <img src={social.icon} alt="" />
                 <span>{social.name.replace(' Profile', '')}</span>
-                <ArrowUpRight size={17} />
               </motion.a>
             ))}
           </div>
@@ -89,17 +82,9 @@ export function HomePage({
           <div className="portrait-aura" aria-hidden="true" />
           <ThornHalo />
           <div className="portrait-window">
-            <img
-              src="/icons/avatar/IMG_2856.jpg"
-              alt="Аватар Kedamo"
-            />
+            <img src="/icons/avatar/IMG_2856.jpg" alt="Аватар Kedamo" />
           </div>
-          <img
-            src="/art/roses-raven.png"
-            className="rose-branch"
-            alt=""
-            aria-hidden="true"
-          />
+          <LivingBotanical enabled={effectsEnabled} />
           <div className="portrait-reflection" aria-hidden="true" />
         </motion.div>
       </section>

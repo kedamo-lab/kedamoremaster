@@ -8,8 +8,14 @@ Existing social destinations, music files, and game content are preserved.
 - The floating header and player have corners rounded to about 25% of their height.
 - Mobile playback buttons have 40–42px touch targets; the player accounts for safe-area insets.
 - Passing ravens use CSS/SVG; mist, drifting ash, parallax, and a subtle film grain support the portrait.
-- The wind button disables ambient movement. System reduced-motion
-  preferences also disable decorative movement and record rotation.
+- Motion is always enabled as explicitly requested by the owner, including when
+  the browser reports reduced motion. There is no effects toggle.
+- The engraving is separated into SVG layers: moving roses, breathing bird,
+  turning head, moving feathers and opening beak. Animated petals and the word
+  `кар` drift away and fade. A real caw plays only on a click/tap on the bird;
+  recording attribution is in docs/raven-audio.md.
+- Page transitions, card reveals, hover/tap feedback, vinyl and player motion
+  use CSS and Framer Motion. No WebGL or animated video is required.
 - Interface icons use the Solar library, imported individually. See THIRD_PARTY_NOTICES.md.
 - Lyrics use matched LRC timestamps and the actual media clock. See docs/lyrics-sources.md.
 - Game details use a native modal dialog for keyboard focus and Escape handling.

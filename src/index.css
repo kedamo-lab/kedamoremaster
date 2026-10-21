@@ -1615,26 +1615,6 @@ input[type='range'] {
     font-size: 25px;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *:before,
-  *:after {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
-  .ravens,
-  .ash {
-    display: none;
-  }
-  .portrait-scene {
-    transform: none !important;
-  }
-  .lyric-active-wrap {
-    filter: none !important;
-    transform: none !important;
-  }
-}
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;

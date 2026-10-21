@@ -1,13 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  ArrowUpRight,
-  ChevronDown,
-  Wind,
-  User,
-  Music,
-  Gamepad2,
-} from './Icons';
+import { ArrowUpRight, ChevronDown, User, Music, Gamepad2 } from './Icons';
 import { TabType } from '../types';
 import { discordServers } from '../data/servers';
 
@@ -15,8 +8,6 @@ interface CardNavProps {
   activeTab: TabType;
   onSelectTab: (tab: TabType) => void;
   isPlaying: boolean;
-  ambientMotion: boolean;
-  onToggleMotion: () => void;
 }
 const tabs = [
   { id: 'home' as const, label: 'Обо мне', Icon: User },
@@ -24,13 +15,7 @@ const tabs = [
   { id: 'games' as const, label: 'Игры', Icon: Gamepad2 },
 ];
 
-export function CardNav({
-  activeTab,
-  onSelectTab,
-  isPlaying,
-  ambientMotion,
-  onToggleMotion,
-}: CardNavProps) {
+export function CardNav({ activeTab, onSelectTab, isPlaying }: CardNavProps) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -91,20 +76,6 @@ export function CardNav({
         ))}
       </nav>
       <div className="header-actions">
-        <button
-          type="button"
-          className="icon-button motion-toggle"
-          onClick={onToggleMotion}
-          aria-pressed={ambientMotion}
-          aria-label={
-            ambientMotion
-              ? 'Выключить визуальные эффекты'
-              : 'Включить визуальные эффекты'
-          }
-          title="Визуальные эффекты"
-        >
-          <Wind size={21} />
-        </button>
         <div className="server-menu" ref={menuRef}>
           <button
             type="button"

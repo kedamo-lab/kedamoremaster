@@ -36,7 +36,10 @@ export function BottomPlayerBar({
     toggleLoop,
   } = useAudio();
   return (
-    <aside className="player" aria-label="Музыкальный плеер">
+    <aside
+      className={`player ${isPlaying ? 'is-playing' : 'is-paused'}`}
+      aria-label="Музыкальный плеер"
+    >
       <div className="player-inner">
         <button
           type="button"
@@ -44,9 +47,17 @@ export function BottomPlayerBar({
           onClick={onOpenMusicTab}
           aria-label={`Открыть музыку — ${currentTrack.title}`}
         >
-          <img src={currentTrack.coverSrc} alt="" />
+          <img key={currentTrack.id} src={currentTrack.coverSrc} alt="" />
           <span>
-            <strong>{currentTrack.title}</strong>
+            <strong>
+              <span className="player-title">{currentTrack.title}</span>
+              <span className="player-equalizer" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+                <i />
+              </span>
+            </strong>
             <small>{currentTrack.artist}</small>
           </span>
         </button>
@@ -66,11 +77,16 @@ export function BottomPlayerBar({
               onClick={togglePlay}
               aria-label={isPlaying ? 'Пауза' : 'Воспроизведение'}
             >
-              {isPlaying ? (
-                <Pause size={17} fill="currentColor" />
-              ) : (
-                <Play size={17} fill="currentColor" />
-              )}
+              <span
+                key={isPlaying ? 'pause' : 'play'}
+                className="playback-symbol"
+              >
+                {isPlaying ? (
+                  <Pause size={17} fill="currentColor" />
+                ) : (
+                  <Play size={17} fill="currentColor" />
+                )}
+              </span>
             </button>
             <button
               type="button"

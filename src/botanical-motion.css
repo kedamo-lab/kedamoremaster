@@ -1,0 +1,325 @@
+.living-botanical {
+  position: absolute;
+  right: -3%;
+  top: 0;
+  width: 66%;
+  height: 100%;
+  overflow: visible;
+  filter: brightness(1.32) contrast(1.08) drop-shadow(-12px 10px 14px #000b);
+  pointer-events: none;
+}
+.botanical-stem {
+  transform-origin: 450px 1410px;
+  animation: botanical-sway 5.2s ease-in-out infinite alternate;
+}
+.living-roses {
+  animation: rose-breathe 4.2s ease-in-out infinite alternate;
+}
+.raven-control {
+  pointer-events: all;
+}
+.raven-touch-target {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 35px;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: all;
+}
+.raven-touch-target:focus-visible {
+  outline: 4px dashed #c7b6d2;
+  outline-offset: -5px;
+}
+.perched-raven-body {
+  transform-origin: 667px 455px;
+  animation: raven-breathe 3.8s ease-in-out infinite;
+}
+.perched-raven-head {
+  transform-origin: 594px 164px;
+  animation: raven-look 7.6s ease-in-out infinite;
+}
+.perched-raven-wing {
+  transform-origin: 627px 218px;
+  animation: raven-ruffle 8.5s ease-in-out infinite;
+}
+.perched-raven-tail {
+  transform-origin: 750px 450px;
+  animation: raven-tail 5.6s ease-in-out infinite alternate;
+}
+.raven-lower-beak {
+  transform-origin: 705px 98px;
+}
+.raven-mouth {
+  opacity: 0;
+}
+.raven-eyelid {
+  opacity: 0;
+  animation: raven-blink 5.3s linear infinite;
+}
+.is-cawing .perched-raven-head {
+  animation: caw-head 1.5s ease-in-out both;
+}
+.is-cawing .perched-raven-body {
+  animation: caw-chest 1.5s ease-in-out both;
+}
+.is-cawing .perched-raven-wing {
+  animation: caw-wing 1.5s ease-in-out both;
+}
+.is-cawing .raven-lower-beak {
+  animation: caw-beak 1.5s ease-in-out both;
+}
+.is-cawing .raven-mouth {
+  animation: caw-mouth 1.5s ease-in-out both;
+}
+.raven-caw-text {
+  font:
+    italic 56px 'Cormorant Garamond',
+    Georgia,
+    serif;
+  fill: #e0d4e9;
+  paint-order: stroke;
+  stroke: #211728;
+  stroke-width: 1px;
+  opacity: 0;
+  transform-origin: 0 0;
+  animation: caw-dissolve 2.7s cubic-bezier(0.2, 0.6, 0.3, 1) both;
+  pointer-events: none;
+}
+.caw-echo {
+  animation-delay: 0.3s;
+  font-size: 43px;
+}
+.falling-rose-petal {
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: petal-drift var(--petal-duration) ease-in-out var(--petal-delay)
+    infinite;
+}
+@keyframes botanical-sway {
+  from {
+    transform: rotate(-2.4deg) translateY(0);
+  }
+  to {
+    transform: rotate(2.4deg) translateY(-8px);
+  }
+}
+@keyframes rose-breathe {
+  from {
+    filter: brightness(0.91);
+  }
+  to {
+    filter: brightness(1.12);
+  }
+}
+@keyframes raven-breathe {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.018) rotate(-0.7deg);
+  }
+}
+@keyframes raven-look {
+  0%,
+  28%,
+  100% {
+    transform: rotate(0);
+  }
+  40%,
+  53% {
+    transform: rotate(-7deg);
+  }
+  70%,
+  83% {
+    transform: rotate(3deg);
+  }
+}
+@keyframes raven-ruffle {
+  0%,
+  62%,
+  100% {
+    transform: rotate(0);
+  }
+  68% {
+    transform: rotate(-4deg);
+  }
+  73% {
+    transform: rotate(1.5deg);
+  }
+  78% {
+    transform: rotate(-2deg);
+  }
+}
+@keyframes raven-tail {
+  from {
+    transform: rotate(-1.5deg);
+  }
+  to {
+    transform: rotate(2.5deg);
+  }
+}
+@keyframes raven-blink {
+  0%,
+  46%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+  47%,
+  49% {
+    opacity: 1;
+  }
+}
+@keyframes caw-head {
+  0% {
+    transform: rotate(-5deg) translateY(-2px);
+  }
+  100% {
+    transform: rotate(0);
+  }
+  12%,
+  32% {
+    transform: rotate(-9deg) translateY(-4px);
+  }
+  47% {
+    transform: rotate(-2deg);
+  }
+  60%,
+  75% {
+    transform: rotate(-6deg);
+  }
+}
+@keyframes caw-chest {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  15%,
+  35% {
+    transform: scaleY(1.045) rotate(-1deg);
+  }
+  62%,
+  75% {
+    transform: scaleY(1.025);
+  }
+}
+@keyframes caw-wing {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20%,
+  36% {
+    transform: rotate(-7deg);
+  }
+  63% {
+    transform: rotate(-3deg);
+  }
+}
+@keyframes caw-beak {
+  0% {
+    transform: rotate(12deg);
+  }
+  8%,
+  45%,
+  85%,
+  100% {
+    transform: rotate(0);
+  }
+  17%,
+  32% {
+    transform: rotate(17deg);
+  }
+  61%,
+  73% {
+    transform: rotate(12deg);
+  }
+}
+@keyframes caw-mouth {
+  0% {
+    opacity: 1;
+  }
+  8%,
+  44%,
+  85%,
+  100% {
+    opacity: 0;
+  }
+  17%,
+  32%,
+  61%,
+  73% {
+    opacity: 1;
+  }
+}
+@keyframes caw-dissolve {
+  0% {
+    opacity: 0.95;
+    transform: translate(8px, -7px) scale(0.8) rotate(-4deg);
+    filter: blur(0);
+  }
+  15% {
+    opacity: 0.95;
+    filter: blur(0);
+  }
+  48% {
+    opacity: 0.72;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(415px, -155px) scale(2.1) rotate(-12deg);
+    filter: blur(12px);
+  }
+}
+@keyframes petal-drift {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0) scale(0.5);
+  }
+  20% {
+    opacity: 0.6;
+  }
+  70% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--petal-drift), 420px) rotate(165deg) scale(0.15);
+  }
+}
+@media (max-width: 760px) {
+  .living-botanical {
+    right: 0;
+    width: 63%;
+  }
+}
+@media (max-width: 540px) {
+  .raven-caw-text {
+    font-size: 68px;
+    animation-name: caw-dissolve-small;
+  }
+  .caw-echo {
+    font-size: 52px;
+  }
+}
+@keyframes caw-dissolve-small {
+  0% {
+    opacity: .95;
+    transform: translate(8px, -7px) scale(.8) rotate(-4deg);
+    filter: blur(0);
+  }
+  15% { opacity: .95; filter: blur(0); }
+  48% { opacity: .72; }
+  100% {
+    opacity: 0;
+    transform: translate(220px, -110px) scale(1.5) rotate(-12deg);
+    filter: blur(12px);
+  }
+}

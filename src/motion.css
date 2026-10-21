@@ -1,0 +1,375 @@
+/* Motion stays on the artwork and controls; lyric cue timing is untouched. */
+.site-shell .site-header {
+  animation: header-arrive 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.site-shell .player {
+  animation: player-arrive 0.75s 0.12s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.site-header .nav-link > .solar,
+.site-header .servers-toggle > img,
+.site-header .icon-button > .solar {
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.25s;
+}
+.site-header .nav-link:hover > .solar {
+  transform: translateY(-3px) rotate(-8deg);
+}
+.site-header .servers-toggle:hover > img {
+  transform: rotate(-9deg) scale(1.12);
+}
+.site-header .motion-toggle[aria-pressed='true'] > .solar {
+  animation: wind-breathe 3.5s ease-in-out infinite;
+}
+.site-header .wordmark,
+.site-header .nav-link,
+.site-header .icon-button,
+.site-header .servers-toggle {
+  transition:
+    transform 0.2s,
+    color 0.2s,
+    background 0.2s;
+}
+.site-header button:active {
+  transform: scale(0.94);
+}
+.server-dropdown .server-item {
+  animation: list-arrive 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.server-dropdown .server-item:nth-child(2) {
+  animation-delay: 0.055s;
+}
+.server-dropdown .server-item:nth-child(3) {
+  animation-delay: 0.11s;
+}
+.home-explore .explore-card {
+  animation: card-arrive 0.75s 0.16s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition:
+    transform 0.3s,
+    border-color 0.3s,
+    background 0.3s,
+    box-shadow 0.3s;
+}
+.home-explore .explore-card:nth-child(2) {
+  animation-delay: 0.25s;
+}
+.home-explore .explore-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px #0005;
+}
+.home-explore .explore-card:active {
+  transform: translateY(-1px) scale(0.985);
+}
+.explore-card .preview-play > span,
+.explore-card .game-preview-art > img {
+  transition:
+    transform 0.4s,
+    opacity 0.3s;
+}
+.explore-card .preview-play:hover > span {
+  transform: scale(1.18);
+}
+.explore-card:hover .game-preview-art > img {
+  transform: scale(1.12);
+}
+.game-card .game-image::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: -40% -30%;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 37%,
+    #e8d8f61f 48%,
+    transparent 58%
+  );
+  transform: translateX(-110%);
+  transition: transform 0.85s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.game-card:hover .game-image::before,
+.game-card:focus-visible .game-image::before {
+  transform: translateX(110%);
+}
+.game-card .game-card-mark {
+  transition:
+    transform 0.5s,
+    color 0.3s;
+}
+.game-card:hover .game-card-mark {
+  transform: rotate(90deg);
+  color: #c9b2dc;
+}
+.game-dialog[open] {
+  animation: dialog-arrive 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.game-dialog[open]::backdrop {
+  animation: backdrop-arrive 0.35s ease both;
+}
+.game-dialog .dialog-header .icon-button:hover {
+  transform: rotate(90deg);
+}
+.game-dialog .dialog-header .icon-button {
+  transition:
+    transform 0.3s,
+    background 0.2s;
+}
+.tracklist .track-row {
+  animation: list-arrive 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition:
+    background 0.25s,
+    transform 0.25s;
+}
+.tracklist .track-row:nth-child(2) {
+  animation-delay: 0.055s;
+}
+.tracklist .track-row:nth-child(3) {
+  animation-delay: 0.11s;
+}
+.tracklist .track-row:nth-child(4) {
+  animation-delay: 0.165s;
+}
+.tracklist .track-row:nth-child(5) {
+  animation-delay: 0.22s;
+}
+.tracklist .track-row:hover {
+  transform: translateX(4px);
+}
+.tracklist .track-row:active {
+  transform: translateX(2px) scale(0.992);
+}
+.tracklist .track-row > img {
+  transition:
+    transform 0.3s,
+    filter 0.3s;
+}
+.tracklist .track-row:hover > img {
+  transform: rotate(-5deg) scale(1.07);
+}
+.vinyl.is-playing::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border: 1px solid #cbb1dd42;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: vinyl-halo 2.8s ease-in-out infinite;
+}
+.player .player-track strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.player-track .player-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.player-equalizer {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+  height: 12px;
+  width: 14px;
+  opacity: 0.9;
+}
+.player-equalizer i {
+  width: 2px;
+  height: 12px;
+  border-radius: 2px;
+  background: #c5a6da;
+  transform-origin: center;
+  animation: equalizer-dance 0.65s ease-in-out infinite alternate;
+}
+.player-equalizer i:nth-child(2) {
+  animation-duration: 0.49s;
+  animation-delay: -0.23s;
+}
+.player-equalizer i:nth-child(3) {
+  animation-duration: 0.78s;
+  animation-delay: -0.55s;
+}
+.player-equalizer i:nth-child(4) {
+  animation-duration: 0.56s;
+  animation-delay: -0.34s;
+}
+.player.is-paused .player-equalizer {
+  opacity: 0.3;
+}
+.player.is-paused .player-equalizer i {
+  animation: none;
+  transform: scaleY(0.2);
+}
+.player.is-playing .main-play {
+  animation: playback-breathe 2.2s ease-in-out infinite;
+}
+.player .playback-symbol {
+  display: grid;
+  place-items: center;
+  animation: symbol-arrive 0.25s ease both;
+}
+.player .icon-button > .solar {
+  transition: transform 0.2s;
+}
+.player .icon-button:hover > .solar {
+  transform: scale(1.2);
+}
+.player .icon-button:active > .solar {
+  transform: scale(0.8);
+}
+.player .main-play:active {
+  transform: scale(0.9);
+}
+.player .player-track > img {
+  animation: cover-arrive 0.45s ease both;
+}
+.player .player-track:hover > img {
+  filter: grayscale(0.5);
+}
+
+@keyframes header-arrive {
+  from {
+    translate: 0 -24px;
+    opacity: 0;
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+@keyframes player-arrive {
+  from {
+    translate: 0 26px;
+    opacity: 0;
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+@keyframes card-arrive {
+  from {
+    translate: 0 22px;
+    opacity: 0;
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+@keyframes list-arrive {
+  from {
+    translate: -18px 0;
+    opacity: 0;
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+@keyframes wind-breathe {
+  0%,
+  100% {
+    transform: translateX(-2px);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translateX(3px);
+    opacity: 1;
+  }
+}
+@keyframes dialog-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes backdrop-arrive {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes vinyl-halo {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.98);
+    box-shadow: 0 0 12px #c3a5d509;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.025);
+    box-shadow: 0 0 35px #c3a5d51f;
+  }
+}
+@keyframes equalizer-dance {
+  from {
+    transform: scaleY(0.25);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes playback-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 #c5a6da24,
+      0 0 18px #c3a5d51a;
+  }
+  55% {
+    box-shadow:
+      0 0 0 8px #c5a6da00,
+      0 0 28px #c3a5d540;
+  }
+}
+@keyframes symbol-arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.65) rotate(-15deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes cover-arrive {
+  from {
+    opacity: 0.3;
+    transform: scale(0.87);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.effects-paused .site-header,
+.effects-paused .player,
+.effects-paused .motion-toggle > .solar,
+.effects-paused .explore-card,
+.effects-paused .server-item,
+.effects-paused .track-row,
+.effects-paused .game-dialog,
+.effects-paused .game-dialog::backdrop,
+.effects-paused .vinyl::before,
+.effects-paused .player-equalizer i,
+.effects-paused .main-play,
+.effects-paused .playback-symbol,
+.effects-paused .player-track > img {
+  animation: none !important;
+}
+.effects-paused .page-transition {
+  transform: none !important;
+  filter: none !important;
+}

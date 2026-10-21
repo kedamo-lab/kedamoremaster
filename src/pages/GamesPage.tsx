@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, X } from '../components/Icons';
 import { games } from '../data/games';
 import { GameItem } from '../types';
@@ -75,8 +76,13 @@ function GameDialog({
   );
 }
 
-export function GamesPage() {
+export function GamesPage({
+  effectsEnabled = true,
+}: {
+  effectsEnabled?: boolean;
+}) {
   const [selectedGame, setSelectedGame] = useState<GameItem | null>(null);
+  const animateCards = effectsEnabled;
   return (
     <div className="collection-page games-page">
       <div className="page-heading">
@@ -85,11 +91,31 @@ export function GamesPage() {
         </div>
       </div>
       <div className="games-grid">
-        {games.map((game) => (
-          <button
+        {games.map((game, index) => (
+          <motion.button
             type="button"
             key={game.id}
             className="game-card"
+            initial={
+              animateCards ? { opacity: 0, y: 36, filter: 'blur(5px)' } : false
+            }
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true, amount: 0.12 }}
+            transition={{
+              duration: 0.55,
+              delay: animateCards ? index * 0.07 : 0,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            whileHover={
+              animateCards
+                ? { y: -5, transition: { duration: 0.22, delay: 0 } }
+                : undefined
+            }
+            whileTap={
+              animateCards
+                ? { scale: 0.985, transition: { duration: 0.12, delay: 0 } }
+                : undefined
+            }
             onClick={() => setSelectedGame(game)}
             aria-label={`Подробнее об игре ${game.title}`}
           >
@@ -108,7 +134,7 @@ export function GamesPage() {
                 ✧
               </span>
             </span>
-          </button>
+          </motion.button>
         ))}
       </div>
       {selectedGame && (
