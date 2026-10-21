@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useRef, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { Track } from '../types';
 import { tracks } from '../data/tracks';
 
@@ -22,139 +29,222 @@ interface AudioContextType {
   toggleLoop: () => void;
 }
 
+type AudioControls = Pick<
+  AudioContextType,
+  'playTrack' | 'togglePlay' | 'nextTrack' | 'prevTrack' | 'seek'
+>;
+
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
-export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AudioProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [trackList] = useState<Track[]>(tracks);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [currentTime, setCurrentTime] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(0);
-  const [volume, setVolume] = useState<number>(0.75);
-  const [isMuted, setIsMuted] = useState<boolean>(false);
-  const [isLooping, setIsLooping] = useState<boolean>(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(0.75);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isLooping, setIsLooping] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const controlsRef = useRef<AudioControls | null>(null);
+  const trackIndexRef = useRef(0);
   const currentTrack = trackList[currentTrackIndex] || trackList[0];
 
   useEffect(() => {
     const audio = new Audio();
     audio.preload = 'metadata';
-    audio.volume = volume;
     audioRef.current = audio;
+    let frame = 0;
+    let playRequest = 0;
+    let pendingPlay = false;
+    let disposed = false;
 
-    const onTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
+    // Always read the media clock: no accumulated timer drift or estimated progress.
+    const syncTime = () => {
+      setCurrentTime(
+        Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
+      );
+    };
+    const syncDuration = () => {
+      setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+    };
+    const stopClock = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    };
+    const tick = () => {
+      syncTime();
+      frame = !audio.paused && !audio.ended ? requestAnimationFrame(tick) : 0;
+    };
+    const startClock = () => {
+      stopClock();
+      tick();
     };
 
-    const onLoadedMetadata = () => {
-      setDuration(audio.duration || 180);
+    const requestPlay = () => {
+      const request = ++playRequest;
+      pendingPlay = true;
+      // Keep play() inside the user action, including track selection on mobile.
+      void audio.play().then(
+        () => {
+          if (!disposed && request === playRequest) pendingPlay = false;
+        },
+        () => {
+          if (!disposed && request === playRequest) {
+            pendingPlay = false;
+            setIsPlaying(false);
+            stopClock();
+          }
+        },
+      );
     };
 
+    const selectTrack = (index: number, shouldPlay: boolean) => {
+      if (!Number.isInteger(index) || index < 0 || index >= trackList.length)
+        return;
+      const source = trackList[index].audioSrc;
+      if (
+        trackIndexRef.current === index &&
+        audio.getAttribute('src') === source
+      ) {
+        if (shouldPlay) {
+          if (audio.ended) audio.currentTime = 0;
+          requestPlay();
+        }
+        return;
+      }
+
+      ++playRequest;
+      pendingPlay = false;
+      audio.pause();
+      stopClock();
+      trackIndexRef.current = index;
+      setCurrentTrackIndex(index);
+      setIsPlaying(false);
+      setCurrentTime(0);
+      setDuration(0);
+      // A source change happens once here, never again in a render effect.
+      audio.src = source;
+      audio.load();
+      if (shouldPlay) requestPlay();
+    };
+
+    const onPlay = () => {
+      if (audio.paused || audio.ended) return;
+      setIsPlaying(true);
+      startClock();
+    };
+    const onPause = () => {
+      if (!audio.paused) return;
+      setIsPlaying(false);
+      stopClock();
+      syncTime();
+    };
     const onEnded = () => {
-      if (isLooping) {
+      if (!audio.ended) return;
+      if (audio.loop) {
         audio.currentTime = 0;
-        audio.play().catch(() => {});
+        syncTime();
+        requestPlay();
       } else {
-        setCurrentTrackIndex((prev) => (prev + 1) % trackList.length);
+        selectTrack((trackIndexRef.current + 1) % trackList.length, true);
       }
     };
+    const onError = () => {
+      if (!audio.error) return;
+      ++playRequest;
+      pendingPlay = false;
+      setIsPlaying(false);
+      stopClock();
+    };
 
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-
-    audio.addEventListener('timeupdate', onTimeUpdate);
-    audio.addEventListener('loadedmetadata', onLoadedMetadata);
-    audio.addEventListener('ended', onEnded);
     audio.addEventListener('play', onPlay);
+    audio.addEventListener('playing', startClock);
     audio.addEventListener('pause', onPause);
+    audio.addEventListener('ended', onEnded);
+    audio.addEventListener('error', onError);
+    audio.addEventListener('timeupdate', syncTime);
+    audio.addEventListener('seeking', syncTime);
+    audio.addEventListener('seeked', syncTime);
+    audio.addEventListener('loadedmetadata', syncDuration);
+    audio.addEventListener('durationchange', syncDuration);
+
+    controlsRef.current = {
+      playTrack: (index) => selectTrack(index, true),
+      togglePlay: () => {
+        if (!audio.paused || pendingPlay) {
+          ++playRequest;
+          pendingPlay = false;
+          audio.pause();
+          onPause();
+        } else {
+          if (audio.ended) audio.currentTime = 0;
+          requestPlay();
+        }
+      },
+      nextTrack: () =>
+        selectTrack(
+          (trackIndexRef.current + 1) % trackList.length,
+          !audio.paused || pendingPlay,
+        ),
+      prevTrack: () =>
+        selectTrack(
+          (trackIndexRef.current - 1 + trackList.length) % trackList.length,
+          !audio.paused || pendingPlay,
+        ),
+      seek: (time) => {
+        if (!Number.isFinite(time) || !Number.isFinite(audio.duration)) return;
+        audio.currentTime = Math.max(0, Math.min(audio.duration, time));
+        syncTime();
+      },
+    };
+
+    audio.src = trackList[trackIndexRef.current].audioSrc;
+    audio.load();
+    setCurrentTime(0);
+    setDuration(0);
+    setIsPlaying(false);
 
     return () => {
-      audio.removeEventListener('timeupdate', onTimeUpdate);
-      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-      audio.removeEventListener('ended', onEnded);
+      disposed = true;
+      ++playRequest;
+      stopClock();
       audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('playing', startClock);
       audio.removeEventListener('pause', onPause);
+      audio.removeEventListener('ended', onEnded);
+      audio.removeEventListener('error', onError);
+      audio.removeEventListener('timeupdate', syncTime);
+      audio.removeEventListener('seeking', syncTime);
+      audio.removeEventListener('seeked', syncTime);
+      audio.removeEventListener('loadedmetadata', syncDuration);
+      audio.removeEventListener('durationchange', syncDuration);
       audio.pause();
-      audio.src = '';
+      audio.removeAttribute('src');
+      audio.load();
+      audioRef.current = null;
+      controlsRef.current = null;
     };
-  }, [trackList.length]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const wasPlaying = isPlaying;
-    audio.src = currentTrack.audioSrc;
-    audio.load();
-
-    if (wasPlaying) {
-      audio.play().catch(() => {
-        setIsPlaying(false);
-      });
-    }
-  }, [currentTrackIndex, currentTrack.audioSrc]);
+  }, [trackList]);
 
   useEffect(() => {
     if (!audioRef.current) return;
-    audioRef.current.volume = isMuted ? 0 : volume;
+    audioRef.current.volume = volume;
+    audioRef.current.muted = isMuted;
   }, [volume, isMuted]);
 
   useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.loop = isLooping;
+    if (audioRef.current) audioRef.current.loop = isLooping;
   }, [isLooping]);
 
-  const playTrack = (index: number) => {
-    setCurrentTrackIndex(index);
-    const audio = audioRef.current;
-    if (audio) {
-      audio.src = trackList[index].audioSrc;
-      audio.play().catch(() => {});
-      setIsPlaying(true);
-    }
-  };
-
-  const togglePlay = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play().catch(() => {});
-    }
-  };
-
-  const nextTrack = () => {
-    setCurrentTrackIndex((prev) => (prev + 1) % trackList.length);
-  };
-
-  const prevTrack = () => {
-    setCurrentTrackIndex((prev) => (prev - 1 + trackList.length) % trackList.length);
-  };
-
-  const seek = (time: number) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.currentTime = time;
-    setCurrentTime(time);
-  };
-
   const setVolumeLevel = (newVolume: number) => {
+    if (!Number.isFinite(newVolume)) return;
     const clamped = Math.max(0, Math.min(1, newVolume));
     setVolume(clamped);
-    if (clamped > 0 && isMuted) {
-      setIsMuted(false);
-    }
-  };
-
-  const toggleMute = () => {
-    setIsMuted((prev) => !prev);
-  };
-
-  const toggleLoop = () => {
-    setIsLooping((prev) => !prev);
+    if (clamped > 0) setIsMuted(false);
   };
 
   return (
@@ -169,14 +259,14 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         volume,
         isMuted,
         isLooping,
-        playTrack,
-        togglePlay,
-        nextTrack,
-        prevTrack,
-        seek,
+        playTrack: (index) => controlsRef.current?.playTrack(index),
+        togglePlay: () => controlsRef.current?.togglePlay(),
+        nextTrack: () => controlsRef.current?.nextTrack(),
+        prevTrack: () => controlsRef.current?.prevTrack(),
+        seek: (time) => controlsRef.current?.seek(time),
         setVolumeLevel,
-        toggleMute,
-        toggleLoop,
+        toggleMute: () => setIsMuted((value) => !value),
+        toggleLoop: () => setIsLooping((value) => !value),
       }}
     >
       {children}
@@ -186,8 +276,7 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
 export const useAudio = (): AudioContextType => {
   const context = useContext(AudioContext);
-  if (!context) {
+  if (!context)
     throw new Error('useAudio must be used within an AudioProvider');
-  }
   return context;
 };

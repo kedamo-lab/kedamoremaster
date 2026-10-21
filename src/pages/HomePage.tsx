@@ -1,50 +1,145 @@
-import React from 'react';
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+} from 'framer-motion';
+import type { PointerEvent } from 'react';
+import { ArrowUpRight, Headphones, Play } from '../components/Icons';
+import { ThornHalo } from '../components/Atmosphere';
 import { socialLinks } from '../data/servers';
+import { useAudio } from '../context/AudioContext';
 
 interface HomePageProps {
-  onNavigateToMusic?: () => void;
-  onNavigateToGames?: () => void;
+  onNavigateToMusic: () => void;
+  onNavigateToGames: () => void;
+  effectsEnabled: boolean;
 }
 
-export const HomePage: React.FC<HomePageProps> = () => {
+export function HomePage({
+  onNavigateToMusic,
+  onNavigateToGames,
+  effectsEnabled,
+}: HomePageProps) {
+  const { currentTrack, isPlaying, togglePlay } = useAudio();
+  const reduceMotion = useReducedMotion();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useSpring(y, { stiffness: 90, damping: 22 });
+  const rotateY = useSpring(x, { stiffness: 90, damping: 22 });
+  function tilt(event: PointerEvent<HTMLDivElement>) {
+    if (reduceMotion || !effectsEnabled || event.pointerType !== 'mouse')
+      return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    x.set(((event.clientX - rect.left) / rect.width - 0.5) * 7);
+    y.set(-((event.clientY - rect.top) / rect.height - 0.5) * 7);
+  }
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 pt-16 pb-28 sm:pb-24 text-center">
-      {/* Avatar */}
-      <div className="relative mb-4 sm:mb-6">
-        <img
-          src="/icons/avatar/IMG_2856.jpg"
-          alt="Kedamo"
-          className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full object-cover border-2 border-white grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl"
-        />
-      </div>
-
-      {/* Nickname */}
-      <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-widest text-white uppercase font-display mb-6 sm:mb-8">
-        Kedamo
-      </h1>
-
-      {/* Social Networks */}
-      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6 max-w-md w-full">
-        {socialLinks.map((social) => (
-          <a
-            key={social.name}
-            href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-white/5 hover:bg-white/15 text-white transition-all duration-200 group border border-white/10 hover:border-white/30"
-          >
+    <div className="home-page">
+      <section className="home-hero" aria-labelledby="home-title">
+        <motion.div
+          className="hero-copy"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.12 }}
+        >
+          <span className="profile-handle">
+            kxdmo. <span lang="ja">逃げろ</span>
+          </span>
+          <h1 id="home-title">kedamo</h1>
+          <p className="hero-motto">
+            the stars collide<span aria-hidden="true">✧</span>
+          </p>
+          <p className="hero-japanese" lang="ja">
+            ハットサハートのファン
+          </p>
+          <div className="social-links" aria-label="Социальные сети">
+            {socialLinks.map((social) => (
+              <motion.a
+                key={social.name}
+                href={social.url}
+                target="_blank"
+                rel="noreferrer"
+                className="social-link"
+                whileHover={{ y: -3 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <img src={social.icon} alt="" />
+                <span>{social.name.replace(' Profile', '')}</span>
+                <ArrowUpRight size={17} />
+              </motion.a>
+            ))}
+          </div>
+        </motion.div>
+        <motion.div
+          className="portrait-scene"
+          onPointerMove={tilt}
+          onPointerLeave={() => {
+            x.set(0);
+            y.set(0);
+          }}
+          style={{
+            rotateX: effectsEnabled ? rotateX : 0,
+            rotateY: effectsEnabled ? rotateY : 0,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <div className="portrait-aura" aria-hidden="true" />
+          <ThornHalo />
+          <div className="portrait-window">
             <img
-              src={social.icon}
-              alt={social.name}
-              className="w-5 h-5 brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity"
+              src="/icons/avatar/IMG_2856.jpg"
+              alt="Аватар Kedamo"
             />
-            <span className="text-xs sm:text-sm font-medium tracking-wide font-mono text-white">
-              {social.name.replace(' Profile', '')}
+          </div>
+          <img
+            src="/art/roses-raven.png"
+            className="rose-branch"
+            alt=""
+            aria-hidden="true"
+          />
+          <div className="portrait-reflection" aria-hidden="true" />
+        </motion.div>
+      </section>
+      <section className="home-explore" aria-label="Музыка и игры">
+        <div className="explore-card music-preview">
+          <button
+            type="button"
+            className="preview-play"
+            onClick={togglePlay}
+            aria-label={isPlaying ? 'Пауза' : 'Воспроизвести музыку'}
+          >
+            <img src={currentTrack.coverSrc} alt="" />
+            <span>
+              {isPlaying ? <Headphones size={23} /> : <Play size={23} />}
             </span>
-          </a>
-        ))}
-      </div>
+          </button>
+          <button
+            type="button"
+            className="explore-link"
+            onClick={onNavigateToMusic}
+          >
+            <strong>{currentTrack.title}</strong>
+            <span>{currentTrack.artist}</span>
+            <ArrowUpRight className="explore-arrow" size={23} />
+          </button>
+        </div>
+        <button
+          type="button"
+          className="explore-card game-preview"
+          onClick={onNavigateToGames}
+        >
+          <span className="game-preview-art">
+            <img src="/game/Dead by Daylight/images.jpg" alt="" />
+          </span>
+          <span className="explore-link">
+            <strong>Игры</strong>
+            <ArrowUpRight className="explore-arrow" size={23} />
+          </span>
+        </button>
+      </section>
     </div>
   );
-};
-
+}

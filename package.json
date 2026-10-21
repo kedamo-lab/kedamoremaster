@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test": "node --test tests/lyrics.test.ts"
   },
   "dependencies": {
+    "@solar-icons/react": "^2.3.3",
     "clsx": "^2.1.1",
     "framer-motion": "^12.43.0",
     "gsap": "^3.12.7",

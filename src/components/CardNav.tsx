@@ -1,247 +1,149 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
-import gsap from 'gsap';
+import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  ArrowUpRight,
+  ChevronDown,
+  Wind,
+  User,
+  Music,
+  Gamepad2,
+} from './Icons';
 import { TabType } from '../types';
 import { discordServers } from '../data/servers';
-import { Home, Music, Gamepad2, ExternalLink } from 'lucide-react';
 
-export interface CardNavProps {
+interface CardNavProps {
   activeTab: TabType;
   onSelectTab: (tab: TabType) => void;
-  isPlaying?: boolean;
-  currentTrackTitle?: string;
+  isPlaying: boolean;
+  ambientMotion: boolean;
+  onToggleMotion: () => void;
 }
+const tabs = [
+  { id: 'home' as const, label: 'Обо мне', Icon: User },
+  { id: 'music' as const, label: 'Музыка', Icon: Music },
+  { id: 'games' as const, label: 'Игры', Icon: Gamepad2 },
+];
 
-export const CardNav: React.FC<CardNavProps> = ({
+export function CardNav({
   activeTab,
   onSelectTab,
-  isPlaying = false,
-}) => {
-  const [isHamburgerOpen, setIsHamburgerOpen] = useState<boolean>(false);
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const navRef = useRef<HTMLElement | null>(null);
-  const cardsRef = useRef<(HTMLAnchorElement | null)[]>([]);
-  const timelineRef = useRef<gsap.core.Timeline | null>(null);
-
-  const calculateHeight = () => {
-    if (!navRef.current) return 250;
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    if (isMobile) {
-      return 64 + 85 * discordServers.length + 12 * (discordServers.length - 1) + 24;
+  isPlaying,
+  ambientMotion,
+  onToggleMotion,
+}: CardNavProps) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    function closeOutside(event: PointerEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) setOpen(false);
     }
-    return 210;
-  };
-
-  const createTimeline = () => {
-    const nav = navRef.current;
-    if (!nav) return null;
-
-    gsap.set(nav, { height: 54, overflow: 'hidden' });
-    gsap.set(cardsRef.current.filter(Boolean), { y: 20, opacity: 0 });
-
-    const tl = gsap.timeline({ paused: true });
-    tl.to(nav, {
-      height: calculateHeight,
-      duration: 0.35,
-      ease: 'power3.out',
-    });
-    tl.to(
-      cardsRef.current.filter(Boolean),
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.3,
-        ease: 'power3.out',
-        stagger: 0.06,
-      },
-      '-=0.15'
-    );
-    return tl;
-  };
-
-  useLayoutEffect(() => {
-    const tl = createTimeline();
-    timelineRef.current = tl;
-    return () => {
-      tl?.kill();
-      timelineRef.current = null;
-    };
-  }, []);
-
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      if (!timelineRef.current) return;
-      if (isMenuOpen) {
-        const h = calculateHeight();
-        gsap.set(navRef.current, { height: h });
-        timelineRef.current.kill();
-        const tl = createTimeline();
-        if (tl) {
-          tl.progress(1);
-          timelineRef.current = tl;
-        }
-      } else {
-        timelineRef.current.kill();
-        const tl = createTimeline();
-        if (tl) {
-          timelineRef.current = tl;
-        }
+    function closeEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        toggleRef.current?.focus();
       }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isMenuOpen]);
-
-  const toggleMenu = () => {
-    const tl = timelineRef.current;
-    if (!tl) return;
-
-    if (isMenuOpen) {
-      setIsHamburgerOpen(false);
-      tl.eventCallback('onReverseComplete', () => {
-        setIsMenuOpen(false);
-      });
-      tl.reverse();
-    } else {
-      setIsHamburgerOpen(true);
-      setIsMenuOpen(true);
-      tl.play(0);
     }
-  };
-
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeEscape);
+    };
+  }, [open]);
   return (
-    <div className="card-nav-container" id="main-header-nav">
-      <nav ref={navRef} className={`card-nav ${isMenuOpen ? 'open' : ''}`}>
-        <div className="card-nav-top">
-          {/* Left: Discord servers dropdown toggle */}
+    <header className="site-header">
+      <button
+        type="button"
+        className="wordmark"
+        aria-label="Kedamo — главная"
+        onClick={() => onSelectTab('home')}
+      >
+        kedamo
+      </button>
+      <nav className="primary-nav" aria-label="Основная навигация">
+        {tabs.map((tab) => (
           <button
-            id="discord-servers-toggle-btn"
+            key={tab.id}
+            id={`nav-tab-${tab.id}`}
             type="button"
-            className={`hamburger-button ${isHamburgerOpen ? 'open' : ''}`}
-            onClick={toggleMenu}
-            aria-label={isMenuOpen ? 'Закрыть список серверов' : 'Открыть список Discord серверов'}
-            aria-expanded={isMenuOpen}
-            title="Список Discord серверов"
+            className={`nav-link ${activeTab === tab.id ? 'active' : ''}`}
+            aria-current={activeTab === tab.id ? 'page' : undefined}
+            onClick={() => {
+              setOpen(false);
+              onSelectTab(tab.id);
+            }}
           >
-            <div className="hamburger-icon">
-              <div className="hamburger-line" />
-              <div className="hamburger-line" />
-            </div>
-            <span className="hidden sm:inline-block text-xs font-mono font-medium tracking-wide uppercase text-white">
-              Серверы
-            </span>
-          </button>
-
-          {/* Center: Primary Navigation Tabs */}
-          <div className="center-nav-tabs">
-            <button
-              id="nav-tab-home"
-              type="button"
-              onClick={() => {
-                if (isMenuOpen) toggleMenu();
-                onSelectTab('home');
-              }}
-              className={`nav-tab-btn ${activeTab === 'home' ? 'active' : ''}`}
-            >
-              <Home className="w-4 h-4 text-white" />
-              <span className="hidden sm:inline">Главная</span>
-            </button>
-
-            <button
-              id="nav-tab-music"
-              type="button"
-              onClick={() => {
-                if (isMenuOpen) toggleMenu();
-                onSelectTab('music');
-              }}
-              className={`nav-tab-btn ${activeTab === 'music' ? 'active' : ''}`}
-            >
-              <Music className="w-4 h-4 text-white" />
-              <span className="hidden sm:inline">Музыка</span>
-              {isPlaying && (
-                <span className="flex items-center gap-0.5 ml-1">
-                  <span className="w-1 h-2.5 bg-white rounded-full animate-pulse" />
-                  <span className="w-1 h-3.5 bg-white rounded-full animate-pulse delay-75" />
-                  <span className="w-1 h-2 bg-white rounded-full animate-pulse delay-150" />
-                </span>
-              )}
-            </button>
-
-            <button
-              id="nav-tab-games"
-              type="button"
-              onClick={() => {
-                if (isMenuOpen) toggleMenu();
-                onSelectTab('games');
-              }}
-              className={`nav-tab-btn ${activeTab === 'games' ? 'active' : ''}`}
-            >
-              <Gamepad2 className="w-4 h-4 text-white" />
-              <span className="hidden sm:inline">Игры</span>
-            </button>
-          </div>
-
-          {/* Right: Profile Avatar Chip */}
-          <div className="nav-avatar-badge hidden sm:flex">
-            <div className="relative">
-              <img
-                src="/icons/avatar/IMG_2856.jpg"
-                alt="Kedamo Avatar"
-                className="w-7 h-7 rounded-full object-cover border border-white"
+            {activeTab === tab.id && (
+              <motion.span
+                className="nav-active-bg"
+                layoutId="nav-active"
+                transition={{ type: 'spring', stiffness: 340, damping: 30 }}
               />
-            </div>
-            <span className="text-xs font-semibold text-white font-mono tracking-wider">
-              Kedamo
-            </span>
-          </div>
-        </div>
-
-        {/* Dropdown Content: Discord Servers */}
-        <div className="card-nav-content">
-          {discordServers.map((server, idx) => (
-            <a
-              key={server.name}
-              ref={(el) => {
-                cardsRef.current[idx] = el;
-              }}
-              href={server.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="server-card group"
-              id={`discord-server-${idx}`}
-            >
-              <div className="flex items-center justify-between gap-2 mb-1.5">
-                <div className="flex items-center gap-2.5">
-                  <img
-                    src={server.avatar}
-                    alt={server.name}
-                    className="w-8 h-8 rounded-lg object-cover border border-white/20 group-hover:border-white transition-colors"
-                  />
-                  <div>
-                    <h4 className="text-xs font-bold text-white group-hover:text-zinc-200 transition-colors leading-tight">
-                      {server.name}
-                    </h4>
-                    <span className="text-[10px] font-mono text-zinc-400">
-                      {server.tag}
-                    </span>
-                  </div>
-                </div>
-                <ExternalLink className="w-3.5 h-3.5 text-white opacity-60 group-hover:opacity-100 transition-opacity" />
-              </div>
-
-              <p className="text-[11px] text-zinc-400 line-clamp-2 mb-2 font-light leading-relaxed">
-                {server.description}
-              </p>
-
-              <div className="mt-auto flex items-center justify-end text-[11px] font-mono text-zinc-400 pt-1.5 border-t border-white/5">
-                <span className="text-white font-medium group-hover:underline">
-                  Войти →
-                </span>
-              </div>
-            </a>
-          ))}
-        </div>
+            )}
+            <tab.Icon size={19} aria-hidden="true" />
+            <span>{tab.label}</span>
+            {tab.id === 'music' && isPlaying && (
+              <span className="playing-dot" aria-label="Играет музыка" />
+            )}
+          </button>
+        ))}
       </nav>
-    </div>
+      <div className="header-actions">
+        <button
+          type="button"
+          className="icon-button motion-toggle"
+          onClick={onToggleMotion}
+          aria-pressed={ambientMotion}
+          aria-label={
+            ambientMotion
+              ? 'Выключить визуальные эффекты'
+              : 'Включить визуальные эффекты'
+          }
+          title="Визуальные эффекты"
+        >
+          <Wind size={21} />
+        </button>
+        <div className="server-menu" ref={menuRef}>
+          <button
+            type="button"
+            ref={toggleRef}
+            id="discord-servers-toggle-btn"
+            className="servers-toggle"
+            aria-label="Серверы Discord"
+            title="Серверы Discord"
+            aria-expanded={open}
+            aria-controls={open ? 'server-list' : undefined}
+            onClick={() => setOpen((value) => !value)}
+          >
+            <img src="/icons/discord.svg" alt="" />
+            <ChevronDown size={13} className={open ? 'rotate-chevron' : ''} />
+          </button>
+          {open && (
+            <motion.div
+              id="server-list"
+              className="server-dropdown"
+              initial={{ opacity: 0, y: -7 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              {discordServers.map((server) => (
+                <a
+                  href={server.url}
+                  key={server.name}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="server-item"
+                >
+                  <img src={server.avatar} alt="" />
+                  <strong>{server.name}</strong>
+                  <ArrowUpRight size={18} />
+                </a>
+              ))}
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </header>
   );
-};
+}
